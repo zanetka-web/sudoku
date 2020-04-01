@@ -1,4 +1,4 @@
-function sudoku(puzzle) {
+module.exports = function sudoku(puzzle) {
 
   function isValueValidOnTheRow(board, value, row) {
       return board[row].indexOf(value) === -1;

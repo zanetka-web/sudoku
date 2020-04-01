@@ -1,32 +1,114 @@
-module.exports = function solveSudoku(matrix) {
-  // your solution
-  for (let i = 0; i < 9; i++) {
-    for (let j = 0; j < 9; j++) {
-      if (matrix[i][j] === 0) {
-        for (let k = 1; k <= 9; k++) {
-          if (isValid(matrix, i, j, k)) {
-            matrix[i][j] = k;
-          if (solveSudoku(matrix)) {
-           return matrix;
-          } else {
-            matrix[i][j] = 0;
-          }
-         }
-       }
-       return false;
-     }
-   }
- }
- return matrix;
-}
+function sudoku(puzzle) {
 
-function isValid(board, row, col, k) {
-  for (let i = 0; i < 9; i++) {
-    const m = 3 * Math.floor(row / 3) + Math.floor(i / 3);
-    const n = 3 * Math.floor(col / 3) + i % 3;
-    if (board[row][i] == k || board[i][col] == k || board[m][n] == k) {
-      return false;
+  function isValueValidOnTheRow(board, value, row) {
+      return board[row].indexOf(value) === -1;
+  }
+
+  function isValueValidOnTheColumn(board, value, col) {
+      let isValid = true;
+
+      for (let i = 0; i < 9; i++) {
+          isValid = isValid && board[i][col] !== value;
+      }
+
+      return isValid;
+  }
+
+  function isValueValidOnTheGrid(board, value, col, row) {
+
+      let isValid = true;
+
+      if (row < 3) {
+          if (col < 3) {
+              for (let i = 0; i < 3; i++) {
+                  for (let j = 0; j < 3; j++) {
+                      isValid = isValid && board[i][j] !== value;
+                  }
+              }
+          } else if (col < 6) {
+              for (let i = 0; i < 3; i++) {
+                  for (let j = 3; j < 6; j++) {
+                      isValid = isValid && board[i][j] !== value;
+                  }
+              }
+          } else if (col < 9) {
+              for (let i = 0; i < 3; i++) {
+                  for (let j = 6; j < 9; j++) {
+                      isValid = isValid && board[i][j] !== value;
+                  }
+              }
+          }
+      } else if (row < 6) {
+          if (col < 3) {
+              for (let i = 3; i < 6; i++) {
+                  for (let j = 0; j < 3; j++) {
+                      isValid = isValid && board[i][j] !== value;
+                  }
+              }
+          } else if (col < 6) {
+              for (let i = 3; i < 6; i++) {
+                  for (let j = 3; j < 6; j++) {
+                      isValid = isValid && board[i][j] !== value;
+                  }
+              }
+          } else if (col < 9) {
+              for (let i = 3; i < 6; i++) {
+                  for (let j = 6; j < 9; j++) {
+                      isValid = isValid && board[i][j] !== value;
+                  }
+              }
+          }
+      } else {
+          if (col < 3) {
+              for (let i = 6; i < 9; i++) {
+                  for (let j = 0; j < 3; j++) {
+                      isValid = isValid && board[i][j] !== value;
+                  }
+              }
+          } else if (col < 6) {
+              for (let i = 6; i < 9; i++) {
+                  for (let j = 3; j < 6; j++) {
+                      isValid = isValid && board[i][j] !== value;
+                  }
+              }
+          } else if (col < 9) {
+              for (let i = 6; i < 9; i++) {
+                  for (let j = 6; j < 9; j++) {
+                      isValid = isValid && board[i][j] !== value;
+                  }
+              }
+          }
+      }
+     
+      return isValid;
+  }
+     
+  function isPuzzleInvalid(board, value, row, col) {
+    return !isValueValidOnTheRow(board, value, row) ||
+    !isValueValidOnTheColumn(board, value, col) ||
+    !isValueValidOnTheGrid(board, value, col, row);
+  }
+ 
+ 
+  for(let row=0; row <9; row++) {
+    for(let col=0; col <9; col++) {
+      if(puzzle[row][col] === 0) {
+        for(let value = 1; value < 10; value++) {
+          if(!isPuzzleInvalid(puzzle, value, row, col)) {
+            puzzle[row][col] = value;
+            // here it goes the trick part, in case the puzzle will not be solved, we will reset the value for 0, in that way it will be open for solving on recursive round
+            if(sudoku(puzzle)) {
+              return puzzle;
+            } else {
+              puzzle[row][col] = 0;
+            }
+          }
+        }
+       
+        return false;
+      }
     }
   }
-  return true;
+ 
+  return puzzle;
 }
